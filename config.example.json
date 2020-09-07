@@ -1,0 +1,8 @@
+{
+  "api_endpoint_ipv4": "https://ipinfo.io",
+  "api_endpoint_cloudflare": "https://api.cloudflare.com/client/v4/",
+  "cloudflare_token": "<insert cloudflare API token>",
+  "cloudflare_zone_id": "<insert cloudflare zone ID>",
+  "cloudflare_record_id": "<insert cloudflare DNS record ID>",
+  "cloudflare_record_name": "<insert cloudflare DNS record name>"
+}
