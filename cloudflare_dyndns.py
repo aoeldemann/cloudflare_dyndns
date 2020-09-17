@@ -1,4 +1,5 @@
 """Update Cloudflare DNS A-record with current public IPv4 address."""
+import logging
 import json
 import urllib.parse
 import sys
@@ -7,7 +8,7 @@ import requests
 
 def error(msg):
     """Print out error message and exit."""
-    print("ERROR: %s" % msg)
+    logging.error("ERROR: %s", msg)
     sys.exit(-1)
 
 
@@ -23,12 +24,19 @@ def get_ipv4(api_endpoint):
         # something went wrong, don't have an IP to return
         return None
 
+    # was IP provided in response?
+    if "ip" not in response:
+        error("invalid IPv4 API response")
+
     # extract IP from response and return
     return response["ip"]
 
 
 def main():
     """Main function."""
+    # set up logging
+    logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+
     # read json config
     try:
         with open("config.json") as config_file:
@@ -83,7 +91,8 @@ def main():
 
     if response["result"]["content"] == ipv4:
         # dns record is up to date. report status and exit
-        print("NO CHANGE: %s - %s" % (config["cloudflare_record_name"], ipv4))
+        logging.info("NO CHANGE: %s - %s",
+                     config["cloudflare_record_name"], ipv4)
         return
 
     # assemble data to post to cloudflare api to update dns entry
@@ -105,7 +114,7 @@ def main():
         error("cloudflare API reported error")
 
     # report status
-    print("UPDATED: %s - %s" % (config["cloudflare_record_name"], ipv4))
+    logging.info("UPDATED: %s - %s", config["cloudflare_record_name"], ipv4)
 
 
 if __name__ == "__main__":
